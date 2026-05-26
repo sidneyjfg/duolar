@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import type { MigrationInterface, QueryRunner } from "typeorm";
 
 export class GoogleCalendarConnections20260524000000 implements MigrationInterface {
   name = "GoogleCalendarConnections20260524000000";

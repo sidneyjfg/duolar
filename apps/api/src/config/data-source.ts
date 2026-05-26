@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import path from "path";
 import { DataSource } from "typeorm";
 import { env } from "./env";
 import { Finance } from "../entities/Finance";
@@ -21,5 +22,5 @@ export const AppDataSource = new DataSource({
   synchronize: false,
   logging: false,
   entities: [User, Task, ShoppingItem, PurchaseSession, Finance, AgendaEvent, PersonalRule, GoogleCalendarConnection, GoogleCalendarEventSync],
-  migrations: ["src/migrations/*.ts"]
+  migrations: [path.join(__dirname, "../migrations/*.{js,ts}")]
 });

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import type { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AgendaAndPersonalRules20260511010000 implements MigrationInterface {
   name = "AgendaAndPersonalRules20260511010000";

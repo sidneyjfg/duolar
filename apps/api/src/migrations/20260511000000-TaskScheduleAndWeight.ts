@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import type { MigrationInterface, QueryRunner } from "typeorm";
 
 export class TaskScheduleAndWeight20260511000000 implements MigrationInterface {
   name = "TaskScheduleAndWeight20260511000000";
