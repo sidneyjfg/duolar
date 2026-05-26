@@ -1,0 +1,17 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: duolar-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: duolar
+      MYSQL_USER: duolar
+      MYSQL_PASSWORD: duolar
+      MYSQL_ROOT_PASSWORD: duolar-root
+    ports:
+      - "3308:3306"
+    volumes:
+      - duolar_mysql:/var/lib/mysql
+
+volumes:
+  duolar_mysql:
