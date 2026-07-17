@@ -20,12 +20,12 @@ function normalizeResponsible(name?: string) {
 }
 
 function encryptionKey() {
-  return crypto.createHash("sha256").update(env.jwtSecret).digest();
+  return crypto.createHash("sha256").update(env.google.tokenEncryptionKey ?? env.jwtSecret).digest();
 }
 
 function encrypt(value: string) {
   const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv("aes-256-gcm", encryptionKey(), iv);
+  const cipher = crypto.createCipheriv("aes-256-gcm", encryptionKey(), iv, { authTagLength: 16 });
   const encrypted = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
   const tag = cipher.getAuthTag();
   return Buffer.concat([iv, tag, encrypted]).toString("base64");
@@ -36,7 +36,7 @@ function decrypt(value: string) {
   const iv = payload.subarray(0, 12);
   const tag = payload.subarray(12, 28);
   const encrypted = payload.subarray(28);
-  const decipher = crypto.createDecipheriv("aes-256-gcm", encryptionKey(), iv);
+  const decipher = crypto.createDecipheriv("aes-256-gcm", encryptionKey(), iv, { authTagLength: 16 });
   decipher.setAuthTag(tag);
   return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString("utf8");
 }
@@ -52,7 +52,14 @@ function asDateTime(date: string, time: string) {
 }
 
 export class GoogleCalendarService {
+  private ensureEnabled() {
+    if (!env.google.calendarEnabled) {
+      throw new AppError("Google Calendar indisponível por revisão de segurança", 503);
+    }
+  }
+
   private oauthClient() {
+    this.ensureEnabled();
     if (!env.google.clientId || !env.google.clientSecret) {
       throw new AppError("Google Calendar não configurado", 503);
     }
@@ -60,6 +67,7 @@ export class GoogleCalendarService {
   }
 
   async listConnections(user: User) {
+    this.ensureEnabled();
     const connections = await repositories.googleCalendarConnections().find({
       where: { user: { id: user.id } },
       order: { responsible: "ASC" }
@@ -95,6 +103,7 @@ export class GoogleCalendarService {
   }
 
   getConnectUrl(user: User, responsible: string) {
+    this.ensureEnabled();
     const trimmedResponsible = responsible.trim();
     if (!trimmedResponsible) throw new AppError("Responsável é obrigatório", 400);
     const state = jwt.sign({ sub: user.id, responsible: trimmedResponsible } satisfies OAuthState, env.jwtSecret, { expiresIn: "10m" });
@@ -109,6 +118,7 @@ export class GoogleCalendarService {
   }
 
   async handleCallback(code?: string, state?: string) {
+    this.ensureEnabled();
     if (!code || !state) throw new AppError("Callback Google inválido", 400);
 
     let payload: OAuthState;
@@ -156,6 +166,7 @@ export class GoogleCalendarService {
   }
 
   async syncEvent(user: User, event: AgendaEvent) {
+    if (!env.google.calendarEnabled) return;
     let targetConnections = await this.targetConnections(user, event.responsible);
     if (!targetConnections.length) return;
 
@@ -211,6 +222,7 @@ export class GoogleCalendarService {
   }
 
   async deleteEventSyncs(eventId: string) {
+    if (!env.google.calendarEnabled) return;
     const syncRepo = repositories.googleCalendarEventSyncs();
     const syncs = await syncRepo.find({
       where: { agendaEvent: { id: eventId } },

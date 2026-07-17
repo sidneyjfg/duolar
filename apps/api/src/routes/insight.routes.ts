@@ -1,9 +1,10 @@
-import { Router } from "express";
-import { InsightController } from "../controllers/InsightController";
+import { Elysia } from "elysia";
+import { requireUser } from "../http/auth";
+import { InsightService } from "../services/InsightService";
 
-const router = Router();
-const controller = new InsightController();
+const service = new InsightService();
 
-router.get("/", controller.list.bind(controller));
-
-export { router as insightRoutes };
+export const insightRoutes = new Elysia({ prefix: "/insights" }).get("/", async ({ headers }) => {
+  const user = await requireUser(headers);
+  return service.list(user);
+});

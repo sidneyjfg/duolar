@@ -1,11 +1,13 @@
-import { IsArray, IsBoolean, IsIn, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+import { ArrayMaxSize, IsArray, IsBoolean, IsIn, IsInt, IsOptional, IsString, Matches, Max, MaxLength, Min } from "class-validator";
 
 export class TaskDto {
   @IsString()
+  @MaxLength(120)
   title!: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(1000)
   description?: string;
 
   @IsIn(["simples", "medio", "pesado"])
@@ -32,19 +34,28 @@ export class TaskDto {
 
   @IsOptional()
   @IsString()
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
   dueDate?: string;
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(7)
   @IsIn(["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"], { each: true })
   scheduledDays?: string[];
 
   @IsOptional()
   @IsArray()
+  @ArrayMaxSize(366)
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { each: true })
   @IsString({ each: true })
   completedDates?: string[];
 
+  @IsOptional()
+  @Matches(/^([01]\d|2[0-3]):[0-5]\d$/)
+  agendaTime?: string;
+
   @IsString()
+  @MaxLength(80)
   responsible!: string;
 
   @IsOptional()

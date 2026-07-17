@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 export function Card({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn("glass rounded-2xl p-5", className)}>{children}</section>;
+  return <section className={cn("duo-panel rounded-lg p-5 text-ink", className)}>{children}</section>;
 }
 
 export function Button({
@@ -13,13 +13,17 @@ export function Button({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" }) {
   const styles = {
-    primary: "bg-indigo-500 text-white hover:bg-indigo-400",
-    ghost: "bg-white/5 text-slate-200 hover:bg-white/10",
-    danger: "bg-rose-500/15 text-rose-200 hover:bg-rose-500/25"
+    primary: "bg-clay text-white hover:bg-[#a95f45]",
+    ghost: "bg-[#efe2cf] text-ink hover:bg-[#e7d7bf]",
+    danger: "bg-rose-100 text-rose-700 hover:bg-rose-200"
   };
   return (
     <button
-      className={cn("inline-flex h-10 items-center justify-center gap-2 rounded-2xl px-4 text-sm font-medium transition disabled:opacity-50", styles[variant], className)}
+      className={cn(
+        "inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold transition-[background-color,color,transform,opacity] duration-150 ease-out active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100",
+        styles[variant],
+        className
+      )}
       {...props}
     >
       {children}
@@ -27,9 +31,17 @@ export function Button({
   );
 }
 
-export function IconButton({ icon: Icon, label, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { icon: LucideIcon; label: string }) {
+export function IconButton({ icon: Icon, label, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { icon: LucideIcon; label: string }) {
   return (
-    <button title={label} aria-label={label} className="grid h-10 w-10 place-items-center rounded-2xl bg-white/5 text-slate-300 transition hover:bg-white/10 hover:text-white" {...props}>
+    <button
+      title={label}
+      aria-label={label}
+      className={cn(
+        "grid h-10 w-10 place-items-center rounded-lg bg-[#efe2cf] text-ink transition-[background-color,color,transform,opacity] duration-150 ease-out active:scale-[0.97] hover:bg-[#e7d7bf]",
+        className
+      )}
+      {...props}
+    >
       <Icon size={18} />
     </button>
   );
@@ -40,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTML
     return (
       <input
         ref={ref}
-        className={cn("h-11 w-full rounded-2xl border border-line bg-white/5 px-4 text-sm outline-none transition placeholder:text-slate-500 focus:border-indigo-400", className)}
+        className={cn("h-11 w-full rounded-lg border border-line bg-white px-4 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-stone-400 focus:border-clay", className)}
         {...props}
       />
     );
@@ -52,7 +64,7 @@ export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<H
     return (
       <select
         ref={ref}
-        className={cn("h-11 w-full rounded-2xl border border-line bg-slate-950/70 px-4 text-sm text-slate-50 outline-none transition focus:border-indigo-400", className)}
+        className={cn("h-11 w-full rounded-lg border border-line bg-white px-4 text-sm text-ink outline-none transition-colors duration-150 focus:border-clay", className)}
         {...props}
       />
     );
@@ -61,19 +73,19 @@ export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<H
 
 export function Badge({ children, tone = "slate" }: { children: React.ReactNode; tone?: "slate" | "emerald" | "amber" | "rose" | "indigo" }) {
   const tones = {
-    slate: "bg-slate-500/10 text-slate-300",
-    emerald: "bg-emerald-500/10 text-emerald-300",
-    amber: "bg-amber-500/10 text-amber-300",
-    rose: "bg-rose-500/10 text-rose-300",
-    indigo: "bg-indigo-500/10 text-indigo-300"
+    slate: "bg-stone-200 text-stone-700",
+    emerald: "bg-emerald-100 text-emerald-800",
+    amber: "bg-amber-100 text-amber-800",
+    rose: "bg-rose-100 text-rose-800",
+    indigo: "bg-sky-100 text-sky-800"
   };
   return <span className={cn("rounded-full px-2.5 py-1 text-xs font-medium", tones[tone])}>{children}</span>;
 }
 
-export function Progress({ value, tone = "bg-indigo-400" }: { value: number; tone?: string }) {
+export function Progress({ value, tone = "bg-clay" }: { value: number; tone?: string }) {
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-white/8">
-      <div className={cn("h-full rounded-full transition-all", tone)} style={{ width: `${Math.min(value, 100)}%` }} />
+    <div className="h-2 overflow-hidden rounded-full bg-stone-200">
+      <div className={cn("h-full rounded-full transition-[width] duration-200 ease-out", tone)} style={{ width: `${Math.min(value, 100)}%` }} />
     </div>
   );
 }

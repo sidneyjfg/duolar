@@ -6,12 +6,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: "#080b12",
-        panel: "#101522",
-        line: "rgba(148, 163, 184, 0.18)"
+        ink: "#1f2a24",
+        panel: "#fffaf0",
+        line: "rgba(74, 68, 57, 0.16)",
+        clay: "#b86f52",
+        moss: "#5f7c5a",
+        oat: "#f4ead8"
       },
       boxShadow: {
-        premium: "0 24px 80px rgba(2, 6, 23, 0.36)"
+        premium: "0 24px 60px rgba(54, 43, 31, 0.16)"
       }
     }
   },

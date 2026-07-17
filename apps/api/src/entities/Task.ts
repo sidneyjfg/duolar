@@ -41,6 +41,9 @@ export class Task {
   @Column({ type: "json", nullable: true })
   completedDates?: string[];
 
+  @Column({ type: "varchar", default: "09:00" })
+  agendaTime!: string;
+
   @Column({ type: "boolean", default: false })
   completed!: boolean;
 

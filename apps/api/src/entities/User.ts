@@ -6,6 +6,7 @@ import { Task } from "./Task";
 import { AgendaEvent } from "./AgendaEvent";
 import { PersonalRule } from "./PersonalRule";
 import { GoogleCalendarConnection } from "./GoogleCalendarConnection";
+import { Session } from "./Session";
 
 @Entity("users")
 export class User {
@@ -23,6 +24,9 @@ export class User {
 
   @Column({ type: "json", nullable: true })
   responsibleNames?: string[];
+
+  @Column({ type: "datetime", nullable: true })
+  disabledAt?: Date | null;
 
   @CreateDateColumn()
   createdAt!: Date;
@@ -47,4 +51,7 @@ export class User {
 
   @OneToMany(() => GoogleCalendarConnection, (connection) => connection.user)
   googleCalendarConnections!: GoogleCalendarConnection[];
+
+  @OneToMany(() => Session, (session) => session.user)
+  sessions!: Session[];
 }

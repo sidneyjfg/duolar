@@ -1,17 +1,15 @@
 services:
-  mysql:
-    image: mysql:8.4
-    container_name: duolar-mysql
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: duolar-api
     restart: unless-stopped
+    env_file:
+      - apps/api/.env
     environment:
-      MYSQL_DATABASE: duolar
-      MYSQL_USER: duolar
-      MYSQL_PASSWORD: duolar
-      MYSQL_ROOT_PASSWORD: duolar-root
+      DB_HOST: host.docker.internal
     ports:
-      - "3308:3306"
-    volumes:
-      - duolar_mysql:/var/lib/mysql
-
-volumes:
-  duolar_mysql:
+      - "127.0.0.1:4000:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

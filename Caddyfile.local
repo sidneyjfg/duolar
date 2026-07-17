@@ -1,0 +1,22 @@
+:8080 {
+  encode gzip
+
+  header {
+    Strict-Transport-Security "max-age=15552000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    Referrer-Policy "no-referrer"
+    Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy-Report-Only "default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+  }
+
+  handle /api/* {
+    reverse_proxy 127.0.0.1:4000
+  }
+
+  handle {
+    root * /home/sidney/automacoes/saas/duolar/apps/web/out
+    try_files {path} {path}/ /index.html
+    file_server
+  }
+}

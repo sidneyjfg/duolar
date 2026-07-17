@@ -11,6 +11,7 @@ const weightScore: Record<TaskWeight, number> = {
 };
 
 const weekDays = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"] as const;
+const weekDaySet = new Set<string>(weekDays);
 
 function scoreTask(task: Pick<Task, "weight" | "mentalEffort" | "domesticImpact">) {
   return (weightScore[task.weight] ?? 1) + Number(task.mentalEffort) + Number(task.domesticImpact);
@@ -24,6 +25,31 @@ function assignDefined<T extends object>(target: T, values: Partial<T>) {
 
 function normalizeDate(date?: string) {
   return date || new Date().toISOString().slice(0, 10);
+}
+
+function normalizeScheduledDays(recurrence: Task["recurrence"], scheduledDays?: string[]) {
+  const uniqueDays = Array.from(new Set((scheduledDays ?? []).filter((day) => weekDaySet.has(day))));
+  if (recurrence === "daily") return [];
+  return uniqueDays;
+}
+
+function normalizeTaskData(data: TaskDto | Partial<TaskDto>) {
+  const recurrence = data.recurrence ?? "none";
+  const dueDate = data.dueDate?.trim() || undefined;
+  const scheduledDays = normalizeScheduledDays(recurrence, data.scheduledDays);
+  const agendaTime = data.agendaTime?.trim() || "09:00";
+
+  return {
+    ...data,
+    title: data.title?.trim(),
+    description: data.description?.trim() || undefined,
+    responsible: data.responsible?.trim(),
+    recurrence,
+    dueDate,
+    scheduledDays,
+    agendaTime,
+    completedDates: data.completedDates ?? []
+  };
 }
 
 function isTaskDueOn(task: Task, date: string) {
@@ -48,13 +74,12 @@ export class TaskService {
   }
 
   async create(user: User, data: TaskDto) {
+    const normalized = normalizeTaskData(data);
     const task = repositories.tasks().create({
-      ...data,
-      mentalEffort: data.mentalEffort ?? 1,
-      domesticImpact: data.domesticImpact ?? 1,
-      priority: data.priority ?? "medium",
-      completedDates: data.completedDates ?? [],
-      scheduledDays: data.scheduledDays ?? [],
+      ...normalized,
+      mentalEffort: normalized.mentalEffort ?? 1,
+      domesticImpact: normalized.domesticImpact ?? 1,
+      priority: normalized.priority ?? "medium",
       user
     });
     return repositories.tasks().save(task);
@@ -64,8 +89,9 @@ export class TaskService {
     const repo = repositories.tasks();
     const task = await repo.findOne({ where: { id, user: { id: user.id } } });
     if (!task) throw new AppError("Tarefa não encontrada", 404);
-    const { title, description, weight, mentalEffort, domesticImpact, priority, recurrence, dueDate, scheduledDays, completedDates, responsible, completed } = data;
-    assignDefined(task, { title, description, weight, mentalEffort, domesticImpact, priority, recurrence, dueDate, scheduledDays, completedDates, responsible, completed });
+    const normalized = normalizeTaskData({ ...task, ...data });
+    const { title, description, weight, mentalEffort, domesticImpact, priority, recurrence, dueDate, scheduledDays, completedDates, responsible, completed, agendaTime } = normalized;
+    assignDefined(task, { title, description, weight, mentalEffort, domesticImpact, priority, recurrence, dueDate, scheduledDays, completedDates, responsible, completed, agendaTime });
     return repo.save(task);
   }
 

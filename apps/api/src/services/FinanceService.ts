@@ -22,8 +22,8 @@ export class FinanceService {
     const repo = repositories.finances();
     const item = await repo.findOne({ where: { id, user: { id: user.id } } });
     if (!item) throw new AppError("Registro não encontrado", 404);
-    const { title, amount, type, category, date, paymentKind, paymentName, dueDate, billingMonth, notes } = data;
-    assignDefined(item, { title, amount, type, category, date, paymentKind, paymentName, dueDate, billingMonth, notes });
+    const { title, amount, type, category, date, paymentKind, paymentName, dueDate, billingMonth, notes, responsible, sharing } = data;
+    assignDefined(item, { title, amount, type, category, date, paymentKind, paymentName, dueDate, billingMonth, notes, responsible, sharing });
     return repo.save(item);
   }
 

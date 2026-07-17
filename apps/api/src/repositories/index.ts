@@ -8,6 +8,8 @@ import { AgendaEvent } from "../entities/AgendaEvent";
 import { PersonalRule } from "../entities/PersonalRule";
 import { GoogleCalendarConnection } from "../entities/GoogleCalendarConnection";
 import { GoogleCalendarEventSync } from "../entities/GoogleCalendarEventSync";
+import { Invite } from "../entities/Invite";
+import { Session } from "../entities/Session";
 
 export const repositories = {
   users: () => AppDataSource.getRepository(User),
@@ -18,5 +20,7 @@ export const repositories = {
   agenda: () => AppDataSource.getRepository(AgendaEvent),
   personalRules: () => AppDataSource.getRepository(PersonalRule),
   googleCalendarConnections: () => AppDataSource.getRepository(GoogleCalendarConnection),
-  googleCalendarEventSyncs: () => AppDataSource.getRepository(GoogleCalendarEventSync)
+  googleCalendarEventSyncs: () => AppDataSource.getRepository(GoogleCalendarEventSync),
+  sessions: () => AppDataSource.getRepository(Session),
+  invites: () => AppDataSource.getRepository(Invite)
 };

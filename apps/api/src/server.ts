@@ -4,9 +4,8 @@ import { env } from "./config/env";
 
 AppDataSource.initialize()
   .then(() => {
-    app.listen(env.port, () => {
-      console.log(`DuoLar API running on http://localhost:${env.port}/api`);
-    });
+    app.listen(env.port);
+    console.log(`DuoLar API running on http://localhost:${env.port}/api`);
   })
   .catch((error) => {
     console.error("Failed to initialize database", error);

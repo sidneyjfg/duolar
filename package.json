@@ -12,7 +12,12 @@
     "dev:api": "npm run dev --workspace apps/api",
     "build": "npm run build --workspace apps/api && npm run build --workspace apps/web",
     "lint": "npm run lint --workspace apps/web",
-    "typecheck": "npm run typecheck --workspace apps/api && npm run typecheck --workspace apps/web"
+    "test": "npm run test --workspace apps/api",
+    "typecheck": "npm run typecheck --workspace apps/api && npm run typecheck --workspace apps/web",
+    "public:tunnel": "bash scripts/start-public-tunnel.sh",
+    "migration:generate": "npm run migration:generate --workspace apps/api",
+    "migration:run": "npm run migration:run --workspace apps/api",
+    "migration:revert": "npm run migration:revert --workspace apps/api"
   },
   "devDependencies": {
     "ts-node": "^10.9.2"

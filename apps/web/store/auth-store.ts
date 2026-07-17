@@ -6,8 +6,7 @@ import { User } from "@/types/domain";
 
 type AuthState = {
   user?: User;
-  token?: string;
-  setSession: (user: User, token: string) => void;
+  setSession: (user: User) => void;
   setUser: (user: User) => void;
   logout: () => void;
 };
@@ -15,10 +14,18 @@ type AuthState = {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      setSession: (user, token) => set({ user, token }),
+      setSession: (user) => set({ user }),
       setUser: (user) => set({ user }),
-      logout: () => set({ user: undefined, token: undefined })
+      logout: () => set({ user: undefined })
     }),
-    { name: "duolar-session" }
+    {
+      name: "duolar-session",
+      version: 2,
+      partialize: (state) => ({ user: state.user }),
+      migrate: (persisted) => {
+        const state = persisted as Partial<AuthState>;
+        return { user: state.user };
+      }
+    }
   )
 );

@@ -1,13 +1,24 @@
-import { Router } from "express";
-import { GoogleCalendarController } from "../controllers/GoogleCalendarController";
-import { auth } from "../middlewares/auth";
+import { Elysia } from "elysia";
+import { env } from "../config/env";
+import { requireUser } from "../http/auth";
+import { GoogleCalendarService } from "../services/GoogleCalendarService";
 
-const router = Router();
-const controller = new GoogleCalendarController();
+const service = new GoogleCalendarService();
 
-router.get("/", auth, controller.list.bind(controller));
-router.get("/connect", auth, controller.connect.bind(controller));
-router.get("/callback", controller.callback.bind(controller));
-router.delete("/:id", auth, controller.disconnect.bind(controller));
-
-export { router as googleCalendarRoutes };
+export const googleCalendarRoutes = new Elysia({ prefix: "/integrations/google-calendar" })
+  .get("/", async ({ headers }) => {
+    const user = await requireUser(headers);
+    return service.listConnections(user);
+  })
+  .get("/connect", async ({ headers, query }) => {
+    const user = await requireUser(headers);
+    return service.getConnectUrl(user, String(query.responsible ?? ""));
+  })
+  .get("/callback", async ({ query }) => {
+    await service.handleCallback(String(query.code ?? ""), String(query.state ?? ""));
+    return Response.redirect(`${env.webOrigin}/?googleCalendar=connected`, 302);
+  })
+  .delete("/:id", async ({ headers, params }) => {
+    const user = await requireUser(headers);
+    return service.disconnect(user, params.id);
+  });

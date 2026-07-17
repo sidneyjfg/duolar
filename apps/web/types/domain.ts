@@ -13,6 +13,7 @@ export type Task = {
   dueDate?: string;
   scheduledDays?: Array<"sunday" | "monday" | "tuesday" | "wednesday" | "thursday" | "friday" | "saturday">;
   completedDates?: string[];
+  agendaTime?: string;
   completed: boolean;
 };
 
@@ -49,6 +50,8 @@ export type Finance = {
   dueDate?: string;
   billingMonth?: string;
   notes?: string;
+  responsible?: string;
+  sharing?: "personal" | "shared";
 };
 
 export type AgendaEvent = {

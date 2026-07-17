@@ -2,26 +2,26 @@
   "name": "@duolar/api",
   "version": "0.1.0",
   "private": true,
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "dev": "bun --watch src/server.ts",
+    "build": "tsc -p tsconfig.json --noEmit",
+    "start": "bun src/server.ts",
+    "test": "TS_NODE_PROJECT=tsconfig.json ts-node src/__tests__/auth.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "admin": "ts-node -P tsconfig.json src/scripts/admin.ts",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate src/migrations/GeneratedMigration -d src/config/data-source.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/data-source.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/data-source.ts"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.1.1",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
-    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-async-errors": "^3.1.1",
+    "elysia": "^1.1.25",
     "googleapis": "^172.0.0",
-    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.0",
     "reflect-metadata": "^0.2.2",
@@ -30,12 +30,9 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.10",
     "ts-node": "^10.9.2",
-    "tsx": "^4.16.2",
     "typescript": "^5.5.3"
   }
 }
